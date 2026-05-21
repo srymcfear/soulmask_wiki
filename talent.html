@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soulmask - Thiên Phú (Talents)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container { max-width: 1480px; margin: 0 auto; }
+        h1 { color: #ffd700; text-align: center; }
+        .subtitle { text-align: center; color: #aaa; margin: 10px 0 20px; }
+
+        /* ========== PHẦN CONSOLE GUIDE ẨN/HIỆN ========== */
+        .toggle-console-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #1a1a1a;
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            font-size: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+        .toggle-console-btn:hover {
+            background: #ffd700;
+            color: #1a1a1a;
+            transform: scale(1.02);
+        }
+        .console-guide {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 5px solid #ffd700;
+            display: none;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .console-guide.show {
+            display: block;
+        }
+        .console-guide h2 { color: #ffd700; margin-top: 0; }
+        .console-guide h3 { color: #ffaa33; margin: 15px 0 5px; }
+        .console-guide pre {
+            background: #111;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+        .console-guide code {
+            background: #2a2a2a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffaa88;
+        }
+        .console-guide ul {
+            margin: 8px 0 12px 20px;
+        }
+        .console-guide li {
+            margin: 4px 0;
+        }
+
+        /* ========== CELL HIỂN THỊ TÊN ========== */
+        .name-cell {
+            font-weight: bold;
+            color: #ffcc66;
+            cursor: help;
+            border-bottom: 2px dotted #ffaa33;
+        }
+        
+        .desc { max-width: 700px; }
+        .icon img {
+            width: 48px;
+            height: 48px;
+            image-rendering: pixelated;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+        .good { background: rgba(0, 255, 120, 0.08); }
+        .bad  { background: rgba(255, 80, 80, 0.08); }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #ffaa66;
+        }
+        .search-info {
+            text-align: center;
+            font-size: 13px;
+            color: #aaa;
+            margin-top: -8px;
+            margin-bottom: 10px;
+        }
+        .controls { text-align: center; margin: 15px 0; }
+        .search {
+            padding: 14px 20px;
+            width: 100%;
+            max-width: 600px;
+            margin: 10px auto;
+            display: block;
+            background: #1f1f1f;
+            border: 2px solid #ffd700;
+            color: white;
+            font-size: 17px;
+            border-radius: 8px;
+        }
+        button.sort-btn {
+            padding: 8px 16px;
+            margin: 0 5px;
+            background: #222;
+            color: #ffd700;
+            border: 1px solid #555;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.sort-btn:hover { background: #333; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1a1a1a;
+        }
+        th, td { padding: 10px; border-bottom: 1px solid #333; }
+        th { 
+            background: #222; 
+            color: #ffd700; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10;
+        }
+        tr:hover { background: #252525; }
+        .id { font-family: monospace; color: #00ffcc; font-weight: bold; }
+        
+        @media (max-width: 768px) {
+            .toggle-console-btn { width: 38px; height: 38px; font-size: 18px; top: 12px; left: 12px; }
+            th, td { font-size: 13px; padding: 6px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="toggle-console-btn" id="toggleConsoleBtn" title="Hiện / Ẩn hướng dẫn console">📘</div>
+
+    <div class="console-guide" id="consoleGuide">
+        <h2>🎮 Hướng dẫn Console Commands (GM)</h2>
+        
+        <h3>📌 Chọn nhân vật</h3>
+        <p>Các lệnh <code>AddNG</code> và <code>RemoveNG</code> sẽ áp dụng cho nhân vật đang được chọn.</p>
+        <pre>gm Select        // Nhắm vào nhân vật rồi dùng lệnh này
+gm ClearSelect   // Bỏ chọn nhân vật</pre>
+
+        <h3>✨ Thêm Thiên Phú</h3>
+        <pre>gm AddNG [ID] [0/1] [Cấp]</pre>
+        <ul>
+            <li><strong>0</strong> = Thiên phú xấu (có thể mất khi lên cấp)</li>
+            <li><strong>1</strong> = Thiên phú tốt (vĩnh viễn)</li>
+        </ul>
+        <p>Ví dụ:</p>
+        <pre>gm AddNG 100013 1 0</pre>
+
+        <h3>❌ Xóa Thiên Phú</h3>
+        <pre>gm RemoveNG [ID] [0/1]</pre>
+
+        <h3>🗑️ Xóa tất cả</h3>
+        <pre>gm ClearNG</pre>
+
+        <h3>🔍 Tìm NPC có Thiên Phú</h3>
+        <pre>gm FindSCGLoc [ID] [Chất lượng tối thiểu]</pre>
+        <p>Ví dụ: Tìm NPC có "Bước Đi Nhanh Nhẹn 3" chất lượng 4 trở lên</p>
+        <pre>gm FindSCGLoc 100013 4</pre>
+    </div>
+
+    <h1>🌟 Soulmask - Thiên Phú (Talents)</h1>
+
+    <input type="text" id="search" class="search" placeholder="🔍 Tìm kiếm ">
+    <div class="search-info" id="searchInfo"></div>
+
+    <div class="controls">
+        <button class="sort-btn" onclick="sortTable('type')">Sắp xếp theo Loại</button>
+        <button class="sort-btn" onclick="sortTable('source')">Sắp xếp theo Nguồn</button>
+        <button class="sort-btn" onclick="resetTable()">Reset</button>
+    </div>
+
+    <div id="loading" class="loading">Đang tải dữ liệu từ talents.json...</div>
+    
+    <table id="talentTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Icon</th>
+                <th>ID Lv1</th>
+                <th>ID Lv2</th>
+                <th>ID Lv3</th>
+                <th>Tên Thiên Phú (rê chuột xem tên gốc)</th>
+                <th>Mô tả</th>
+                <th onclick="sortTable('type')" style="cursor:pointer;">Loại ▼</th>
+                <th onclick="sortTable('source')" style="cursor:pointer;">Nguồn ▼</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+
+<script>
+    let allTalents = [];
+    let activeTooltip = null;
+    let tooltipTimeout = null;
+
+    async function loadData() {
+        try {
+            const res = await fetch('talents.json');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            allTalents = data.talents || [];
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('talentTable').style.display = 'table';
+            renderTable(allTalents);
+        } catch (e) {
+            document.getElementById('loading').innerHTML = `❌ Không thể tải <strong>talents.json</strong>. Chi tiết: ${e.message}<br><span style="font-size:14px;">Đảm bảo file talents.json tồn tại cùng thư mục và đúng định dạng.</span>`;
+            console.error(e);
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function getOriginalName(talent) {
+        if (talent.name && typeof talent.name === 'string' && talent.name.trim() !== '') {
+            return talent.name.trim();
+        }
+        if (talent.original_name) return talent.original_name;
+        return '';
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        if (!data || data.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="8" style="text-align:center; padding:40px;">🔍 Không tìm thấy thiên phú nào phù hợp.</td>`;
+            tbody.appendChild(tr);
+            return;
+        }
+
+        data.forEach(t => {
+            const tr = document.createElement('tr');
+            if (t.type === "Tích cực") tr.className = "good";
+            else if (t.type === "Tiêu cực") tr.className = "bad";
+            else tr.className = "";
+            
+            const originalName = getOriginalName(t);
+            const nameCellContent = escapeHtml(t.title) || '—';
+            
+            tr.innerHTML = `
+                <td class="icon">${t.icon ? `<img src="${escapeHtml(t.icon)}" alt="icon" loading="lazy" onerror="this.style.opacity='0.5'">` : '—'}</td>
+                <td class="id">${t.id_level1 != null ? escapeHtml(String(t.id_level1)) : ''}</td>
+                <td class="id">${t.id_level2 != null ? escapeHtml(String(t.id_level2)) : ''}</td>
+                <td class="id">${t.id_level3 != null ? escapeHtml(String(t.id_level3)) : ''}</td>
+                <td class="name-cell" data-original="${escapeHtml(originalName)}">${nameCellContent}</td>
+                <td class="desc">${escapeHtml(t.description) || '—'}</td>
+                <td>${escapeHtml(t.type) || '—'}</td>
+                <td>${escapeHtml(t.source) || '—'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        attachTooltipEvents();
+    }
+
+    function attachTooltipEvents() {
+        const cells = document.querySelectorAll('.name-cell');
+        
+        cells.forEach(cell => {
+            cell.removeEventListener('mouseenter', onMouseEnter);
+            cell.removeEventListener('mouseleave', onMouseLeave);
+            cell.addEventListener('mouseenter', onMouseEnter);
+            cell.addEventListener('mouseleave', onMouseLeave);
+        });
+    }
+
+    function onMouseEnter(e) {
+        const cell = e.currentTarget;
+        const originalText = cell.getAttribute('data-original');
+        
+        if (!originalText || originalText.trim() === '') return;
+        
+        if (tooltipTimeout) {
+            clearTimeout(tooltipTimeout);
+            tooltipTimeout = null;
+        }
+        
+        removeTooltip();
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'custom-name-tooltip';
+        tooltip.textContent = originalText;
+        
+        tooltip.style.cssText = `
+            position: fixed;
+            background: linear-gradient(135deg, #1e2e2a 0%, #0f1a1a 100%);
+            color: #ffd966;
+            padding: 14px 24px;
+            border-radius: 20px;
+            font-size: 17px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,215,0,0.4);
+            font-family: 'Segoe UI', 'Courier New', monospace;
+            z-index: 10001;
+            white-space: nowrap;
+            backdrop-filter: blur(5px);
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+            opacity: 0;
+        `;
+        
+        const rect = cell.getBoundingClientRect();
+        const tooltipWidth = Math.min(350, originalText.length * 12 + 60);
+        
+        let leftPos = rect.right + 15;
+        let topPos = rect.top + (rect.height / 2) - 25;
+        
+        if (leftPos + tooltipWidth > window.innerWidth - 20) {
+            leftPos = rect.left - tooltipWidth - 15;
+        }
+        
+        if (topPos < 10) topPos = 10;
+        if (topPos + 70 > window.innerHeight) topPos = window.innerHeight - 80;
+        
+        tooltip.style.left = leftPos + 'px';
+        tooltip.style.top = topPos + 'px';
+        
+        document.body.appendChild(tooltip);
+        activeTooltip = tooltip;
+        
+        setTimeout(() => {
+            if (activeTooltip) activeTooltip.style.opacity = '1';
+        }, 10);
+    }
+
+    function onMouseLeave(e) {
+        tooltipTimeout = setTimeout(() => {
+            removeTooltip();
+        }, 150);
+    }
+
+    function removeTooltip() {
+        if (activeTooltip && activeTooltip.parentNode) {
+            activeTooltip.parentNode.removeChild(activeTooltip);
+        }
+        activeTooltip = null;
+    }
+
+    let currentSortedColumn = null;
+    let currentSortAsc = true;
+
+    function sortTable(column) {
+        if (!allTalents.length) return;
+        if (currentSortedColumn === column) {
+            currentSortAsc = !currentSortAsc;
+        } else {
+            currentSortAsc = true;
+            currentSortedColumn = column;
+        }
+        
+        const sorted = [...allTalents].sort((a, b) => {
+            let valA = a[column] || '';
+            let valB = b[column] || '';
+            if (typeof valA === 'string') valA = valA.toLowerCase();
+            if (typeof valB === 'string') valB = valB.toLowerCase();
+            if (valA < valB) return currentSortAsc ? -1 : 1;
+            if (valA > valB) return currentSortAsc ? 1 : -1;
+            return 0;
+        });
+        renderTable(sorted);
+    }
+
+    function resetTable() {
+        currentSortedColumn = null;
+        currentSortAsc = true;
+        document.getElementById('search').value = '';
+        renderTable(allTalents);
+        const infoDiv = document.getElementById('searchInfo');
+        if (infoDiv) infoDiv.innerHTML = '';
+        removeTooltip();
+        if (tooltipTimeout) clearTimeout(tooltipTimeout);
+    }
+
+    function performSearch() {
+        const keyword = document.getElementById('search').value.toLowerCase().trim();
+        const infoDiv = document.getElementById('searchInfo');
+        
+        if (!keyword) {
+            renderTable(allTalents);
+            infoDiv.innerHTML = '';
+            return;
+        }
+        
+        const filtered = allTalents.filter(t => {
+            const originalName = getOriginalName(t).toLowerCase();
+            const matchId1 = t.id_level1 != null && String(t.id_level1).toLowerCase().includes(keyword);
+            const matchId2 = t.id_level2 != null && String(t.id_level2).toLowerCase().includes(keyword);
+            const matchId3 = t.id_level3 != null && String(t.id_level3).toLowerCase().includes(keyword);
+            const matchTitle = t.title && t.title.toLowerCase().includes(keyword);
+            const matchDesc = t.description && t.description.toLowerCase().includes(keyword);
+            const matchType = t.type && t.type.toLowerCase().includes(keyword);
+            const matchSource = t.source && t.source.toLowerCase().includes(keyword);
+            const matchOriginal = originalName.includes(keyword);
+            
+            return matchId1 || matchId2 || matchId3 || matchTitle || matchDesc || matchType || matchSource || matchOriginal;
+        });
+        
+        renderTable(filtered);
+        infoDiv.innerHTML = `🔎 Tìm thấy <strong>${filtered.length}</strong> kết quả cho từ khóa: "${escapeHtml(keyword)}" (bao gồm tên gốc)`;
+        if (filtered.length === 0) {
+            infoDiv.style.color = "#ff8866";
+        } else {
+            infoDiv.style.color = "#aaffaa";
+        }
+    }
+
+    let searchTimeout;
+    document.getElementById('search').addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            performSearch();
+        }, 200);
+    });
+
+    const toggleBtn = document.getElementById('toggleConsoleBtn');
+    const consoleGuide = document.getElementById('consoleGuide');
+    
+    toggleBtn.addEventListener('click', () => {
+        // consoleGuide.classList.toggle('show');
+        consoleGuide.classList.toggle('hiden');
+        if (consoleGuide.classList.contains('show')) {
+            toggleBtn.title = "Ẩn hướng dẫn console";
+        } else {
+            toggleBtn.title = "Hiện hướng dẫn console";
+        }
+    });
+    
+    window.onload = loadData;
+</script>
+</body>
+</html>
